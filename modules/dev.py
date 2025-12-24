@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext.commands import GroupCog, Bot
 
-from data.env.loader import load_environment
+from data.env.loader import env, load_environment
 
 
 class dev(GroupCog) :
@@ -13,7 +13,7 @@ class dev(GroupCog) :
 	@app_commands.command(name="reload", description="reloads the current environment")
 	async def reload_env(self, interaction: discord.Interaction):
 		load_environment()
-		await interaction.response.send_message("Your environment file has been reloaded!", ephemeral=True)
+		await interaction.response.send_message(f"Your environment file has been reloaded! Your test variable is now: {env('TEST')}", ephemeral=True)
 
 
 
