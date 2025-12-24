@@ -70,7 +70,7 @@ class SlashCommandExamples(commands.Cog) :
 			ephemeral=True)
 
 	@app_commands.command(name="basic_with_permission")
-	@app_commands.checks.has_permissions(administrator==True)
+	@app_commands.checks.has_permissions(administrator=True)
 	async def basic_with_permission(self, interaction: discord.Interaction) :
 		"""Example of a slash command that requires administrator permissions to use.
 
