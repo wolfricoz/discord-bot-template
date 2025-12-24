@@ -1,13 +1,17 @@
 # dependencies included in requrements.txt. To install do pip -r requirements.txt
 # (or for a specific python version: python3.10 -m pip -r requirements.txt)
+import asyncio
 import logging
 import os
+from contextlib import asynccontextmanager
 
+import FastAPI
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 
+import api
 from data.env.loader import env, load_environment
 from database import database
 
@@ -24,6 +28,48 @@ intents.members = True
 # this sets your bots activity
 activity = discord.Activity(type=discord.ActivityType.watching, name="over SERVER NAME")
 bot = commands.Bot(command_prefix=env(''), case_insensitive=False, intents=intents, activity=activity)
+
+
+# Api imports, this allows you to run the bot as an api if required. This is 100% optional.
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) :
+	# Starts the bot in an async task, make sure to turn API to TRUE in the .env file to use this feature.
+	async def run_bot() :
+		try :
+			await bot.start(env('TOKEN'))
+		except asyncio.CancelledError :
+			# Graceful cancellation
+			await bot.close()
+			raise
+
+	logging.info("Starting bot...")
+	bot_task = asyncio.create_task(run_bot())
+	logging.info("Bot started.")
+	app.state.bot = bot
+	try :
+		yield
+	finally :
+		# Trigger shutdown if still running
+		if not bot.is_closed() :
+			await bot.close()
+		# Ensure the task finishes
+		if not bot_task.done() :
+			bot_task.cancel()
+			try :
+				await bot_task
+			except asyncio.CancelledError :
+				pass
+
+app = FastAPI(lifespan=lifespan)
+routers = []
+# Loops through all the routers in the api folder and includes them in the FastAPI app.
+for router in api.__all__ :
+	try :
+		app.include_router(getattr(api, router))
+		routers.append(router)
+	except Exception as e :
+		logging.error(f"Failed to load {router}: {e}")
 
 
 # start up event; bot.tree.sync is required for the slash commands.
@@ -59,4 +105,5 @@ async def setup_hook() :
 
 # runs the bot with the token
 if env('API') != "TRUE" :
+
 	bot.run(env('TOKEN'))
