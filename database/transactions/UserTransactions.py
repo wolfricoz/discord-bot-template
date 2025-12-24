@@ -1,5 +1,5 @@
 """This is an example of how to make a database transaction class for user transactions."""
-from sqlalchemy import Select
+from sqlalchemy import Select, exists
 
 from database.database import Users
 from database.transactions.DatabaseTransactions import DatabaseTransactions
@@ -31,6 +31,10 @@ class UserTransactions(DatabaseTransactions):
 
 	def create_user(self, user_id: int) -> Users :
 		"""This function creates a new user in the database. """
+		if self.user_exists(user_id) :
+			# If the user already exists we return the existing user instead of creating a new one.
+			return self.get_user(user_id)
+
 		with self.createsession() as session:
 			# We create a new Users object with the user_id passed to the function. Because the other fields have defaults we don't need to fill them right now.
 			new_user = self.table(id=user_id)
@@ -44,8 +48,8 @@ class UserTransactions(DatabaseTransactions):
 	def user_exists(self, user_id: int) -> bool :
 		"""This function checks if a user exists in the database."""
 		with self.createsession() as session:
-			# We use the scalar function to get the user from the database. by using the 'exists' function we can check if the user exists without having to retrieve the entire user object.
-			return session.scalar(Select(self.table).where(self.table.id == user_id).exists())
+			# We use the query function to get the user from the database. by using the 'exists' function we can check if the user exists without having to retrieve the entire user object.
+			return session.scalar(Select(exists().where(self.table.id == user_id)))
 
 	# You could also do this with a dictionary but for this example we will use individual parameters because it's easier to read, especially for beginners.
 	def update_user(self, userid:int ,  messages: int = None, xp:int = None) -> Users | None :
