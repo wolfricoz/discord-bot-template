@@ -65,6 +65,8 @@ class UserTransactions(DatabaseTransactions):
 				if value is not None:
 					# we use the python built-in setattr function to set the attribute of the user object to the new value.
 					setattr(user, field, value)
+			# We add the user to the session and commit the changes.
+			session.add(user)
 			self.commit(session)
 			return user
 
@@ -74,6 +76,7 @@ class UserTransactions(DatabaseTransactions):
 			user = self.get_user(user_id)
 			if not user :
 				return False
+			# Delete the user from the database.
 			session.delete(user)
 			self.commit(session)
 			return True
