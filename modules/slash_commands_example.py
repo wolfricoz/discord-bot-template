@@ -21,7 +21,8 @@ class SlashCommandExamples(commands.Cog) :
 		"""
 		# Ephemeral means only you can xee the message
 		await interaction.response.send_message(
-			f"This is your first basic command, the variable has the following contents: {variable}, and your optional variable has the following contents: {optional_variable}", ephemeral=True)
+			f"This is your first basic command, the variable has the following contents: {variable}, and your optional variable has the following contents: {optional_variable}",
+			ephemeral=True)
 
 	@app_commands.command(name="basic_with_choices")
 	@app_commands.choices(choice_var=[
@@ -50,7 +51,8 @@ class SlashCommandExamples(commands.Cog) :
 		await interaction.response.send_message(f"You chose {choice_var.value}", ephemeral=True)
 
 	@app_commands.command(name="basic_with_discord_objects")
-	async def basic_with_discord_objects(self, interaction: discord.Interaction, member: discord.Member, channel: discord.TextChannel, role:  discord.Role = None):
+	async def basic_with_discord_objects(self, interaction: discord.Interaction, member: discord.Member,
+	                                     channel: discord.TextChannel, role: discord.Role = None) :
 		"""Example of a slash command that takes discord objects as arguments.
 
 		This function demonstrates how to accept Discord-specific objects like members
@@ -68,6 +70,26 @@ class SlashCommandExamples(commands.Cog) :
 		await interaction.response.send_message(
 			f"You selected member: {member.display_name} (ID: {member.id}) and channel: {channel.name} (ID: {channel.id})",
 			ephemeral=True)
+
+	@app_commands.command(name="basic_with_embed", description="Want to send an embed? This is how!")
+	async def basic_with_embed(self, interaction: discord.Interaction) :
+		"""Example of a slash command that responds with an embed."""
+		# Create an embed object
+		embed = discord.Embed(
+			title="This is an embed title",
+			description="This is the description of the embed. You can use **Markdown** here!",
+			color=discord.Color.blue()
+		)
+		# set the author
+		embed.set_author(name="Embed Author", icon_url=interaction.user.avatar.url)
+		# add fields
+		embed.add_field(name="Field 1", value="This is the value for field 1", inline=False)
+		embed.add_field(name="Field 2", value="This is the value for field 2", inline=True)
+		embed.add_field(name="Field 3", value="This is the value for field 3", inline=True)
+		# set the footer
+		embed.set_footer(text="This is the footer text")
+		# Send the embed as a response. Ephemeral ensures only the caller sees it. Congratulations, you've made your first embed!
+		await interaction.response.send_message(embed=embed, ephemeral=True)
 
 	@app_commands.command(name="basic_with_permission")
 	@app_commands.checks.has_permissions(administrator=True)
@@ -91,12 +113,12 @@ class SlashCommandExamples(commands.Cog) :
 
 	async def auto_complete_country(self, interaction: discord.Interaction, current: str) :
 		# You can replace this with a database call to get a list of countires, users, guilds, etc. As long as its a string you can put it in here.
-		countries = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Spain", "Netherlands", "Brazil", "India", "Japan", "South Korea"]
+		countries = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Spain",
+		             "Netherlands", "Brazil", "India", "Japan", "South Korea"]
 		return [
 			app_commands.Choice(name=country, value=country)
 			for country in countries if current.lower() in country.lower()
 		][:25]  # Limit to maximum 25 suggestions
-
 
 	@app_commands.command(name="advanced_with_autocomplete")
 	@app_commands.autocomplete()
@@ -130,9 +152,9 @@ class SlashCommandExamples(commands.Cog) :
 
 		"""
 
-
 		view = MyView()
 		await interaction.response.send_message("Here is a button for you to click:", view=view, ephemeral=True)
+
 
 async def setup(bot) :
 	await bot.add_cog(SlashCommandExamples(bot))

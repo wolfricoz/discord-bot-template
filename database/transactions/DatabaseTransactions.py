@@ -6,7 +6,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 from database.database import engine
-from database.exceptions.CommitError import CommitError
 
 
 class DatabaseTransactions:

@@ -12,6 +12,10 @@ class dev(GroupCog) :
 
 	@app_commands.command(name="reload", description="reloads the current environment")
 	async def reload_env(self, interaction: discord.Interaction):
+		"""Reloads the environment variables from the .env file."""
+		# A little challenge for you! Make it so this command can only be used by you.
+
+		# reloads the env file.
 		load_environment(override=True)
 		await interaction.response.send_message(f"Your environment file has been reloaded! Your test variable is now: {env('TEST')}", ephemeral=True)
 
