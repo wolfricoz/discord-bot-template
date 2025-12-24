@@ -16,7 +16,9 @@ class ExampleButtons(discord.ui.View) :
 	async def disable_buttons(self, interaction: discord.Interaction) :
 		"""Disables all buttons in the view, you can call this in your button to disable it - but thats optional"""
 		for item in self.children :
+			# Loop through all items, and disable them
 			item.disabled = True
+		# tries to edit the message and then reflect the changes. you must always edit the message with the updated view otherwise the changes wont show.
 		try :
 			await interaction.message.edit(view=self)
 		except Exception :
