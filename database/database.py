@@ -9,12 +9,17 @@ from sqlalchemy.sql import func
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.pool import NullPool
 from dotenv import load_dotenv
+
+from data.env.loader import env
+
 pymysql.install_as_MySQLdb()
 
 # https://docs.sqlalchemy.org/en/20/core/engines.html
 load_dotenv('.env')
-dblink = os.getenv('DB')
-engine = create_engine(dblink, poolclass=NullPool)
+
+
+# creates the engine and session, nullpool is used to prevent connections from being reused to avoid stale connections, so you don't have to manage them yourself.
+engine = create_engine(f"{env('DB_TYPE', 'mysql')}://{env('DB_USER', 'username')}:{env('DB_PASSWORD', 'password')}@{env('DB_HOST', "127.0.0.1")}:{env('DB_PORT', "3306")}/{env('DB_NAME', "template")}", poolclass=NullPool)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 if not database_exists(engine.url):
     create_database(engine.url)
