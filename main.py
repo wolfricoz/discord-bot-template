@@ -5,7 +5,8 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
-import FastAPI
+from fastapi import FastAPI
+
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
