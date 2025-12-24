@@ -8,15 +8,15 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 
+from data.env.loader import env, load_environment
 from database import database
 
 # Creates database
 database.database().create()
 session = Session(database.engine)
 # loads env and variables
-load_dotenv('.env')
-token = os.getenv('TOKEN')
-PREFIX = os.getenv('PREFIX')
+load_environment()
+
 # declares the bots intent, these are required to view message content and the members in the guild.
 intents = discord.Intents.default()
 intents.message_content = True
@@ -59,6 +59,6 @@ async def setup_hook():
 
 
 
-
 # runs the bot with the token
-bot.run(token)
+if env('API') != "TRUE":
+	bot.run(token)
