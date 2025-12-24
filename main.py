@@ -23,42 +23,40 @@ intents.message_content = True
 intents.members = True
 # this sets your bots activity
 activity = discord.Activity(type=discord.ActivityType.watching, name="over SERVER NAME")
-bot = commands.Bot(command_prefix=PREFIX, case_insensitive=False, intents=intents, activity=activity)
+bot = commands.Bot(command_prefix=env(''), case_insensitive=False, intents=intents, activity=activity)
 
 
 # start up event; bot.tree.sync is required for the slash commands.
 @bot.event
-async def on_ready():
-    # You can add the items you want on start up here.
+async def on_ready() :
+	# You can add the items you want on start up here.
 
-    # Synchronises the slash commands with discord.
-    await bot.tree.sync()
-    print("Commands synced, start up _done_")
+	# Synchronises the slash commands with discord.
+	await bot.tree.sync()
+	print("Commands synced, start up _done_")
 
 
 # Grabs all the modules from the specified folders and loads them.
 @bot.event
-async def setup_hook():
-    directories = ["modules", "listeners", "tasks"]
-    loaded = []
-    for directory in directories:
-        try:
-            # Loop through all the files in the directory, and load them.
-            for filename in os.listdir(directory):
+async def setup_hook() :
+	directories = ["modules", "listeners", "tasks"]
+	loaded = []
+	for directory in directories :
+		try :
+			# Loop through all the files in the directory, and load them.
+			for filename in os.listdir(directory) :
 
-                if filename.endswith('.py'):
-                    await bot.load_extension(f"{directory}.{filename[:-3]}")
-                    loaded.append(f"{directory}.{filename[:-3]}")
-                else:
-                    logging.info(f'Unable to load {filename[:-3]} in {directory}')
-        except FileNotFoundError:
-            os.mkdir(directory)
-            pass
-    logging.info(f'Loaded {len(loaded)} modules: {", ".join(loaded)}')
-
-
+				if filename.endswith('.py') :
+					await bot.load_extension(f"{directory}.{filename[:-3]}")
+					loaded.append(f"{directory}.{filename[:-3]}")
+				else :
+					logging.info(f'Unable to load {filename[:-3]} in {directory}')
+		except FileNotFoundError :
+			os.mkdir(directory)
+			pass
+	logging.info(f'Loaded {len(loaded)} modules: {", ".join(loaded)}')
 
 
 # runs the bot with the token
-if env('API') != "TRUE":
-	bot.run(token)
+if env('API') != "TRUE" :
+	bot.run(env('TOKEN'))
