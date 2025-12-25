@@ -14,13 +14,16 @@ from sqlalchemy.orm import Session
 
 import api
 from data.env.loader import env, load_environment
-from database import database
 
-# Creates database
-database.database().create()
-session = Session(database.engine)
 # loads env and variables
 load_environment()
+
+# Creates database
+from database import database
+
+database.database().create()
+session = Session(database.engine)
+
 
 # declares the bots intent, these are required to view message content and the members in the guild.
 intents = discord.Intents.default()
