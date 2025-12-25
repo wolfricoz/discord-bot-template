@@ -1,2 +1,5 @@
 /.idea/
 /.env
+/error.txt
+tests/.env.test
+tests/test_modules/.env.test
